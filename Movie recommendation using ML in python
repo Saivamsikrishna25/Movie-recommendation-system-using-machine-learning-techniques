@@ -1,0 +1,82 @@
+### Steps to Build a Movie Recommendation System:
+
+#### 1. **Install Required Libraries**
+First, make sure you have all the necessary libraries installed. You can install them using pip:
+
+```bash
+pip install pandas numpy scikit-learn
+```
+
+#### 2. **Load the Dataset**
+You can use a dataset from Kaggle like the [MovieLens dataset](https://www.kaggle.com/datasets), which contains information on movies, ratings, and genres. First, download the dataset, and load it using `pandas`.
+
+```python
+import pandas as pd
+
+movies = pd.read_csv('movies.csv')
+ratings = pd.read_csv('ratings.csv')
+```
+
+#### 3. **Data Preprocessing**
+Clean and preprocess the data by handling missing values, splitting genres, or creating new features.
+
+```python
+# Splitting the genres into separate columns
+movies['genres'] = movies['genres'].str.split('|')
+```
+
+#### 4. **Feature Extraction**
+For content-based filtering, we use the movie metadata (e.g., genres, descriptions, tags) to recommend similar movies. One way to do this is by creating a "bag of words" or using TF-IDF (Term Frequency-Inverse Document Frequency) to convert the text data into feature vectors.
+
+```python
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+# Combining all metadata information
+movies['metadata'] = movies['title'] + " " + movies['genres'].apply(lambda x: ' '.join(x))
+
+# Using TF-IDF to create feature vectors
+tfidf = TfidfVectorizer(stop_words='english')
+tfidf_matrix = tfidf.fit_transform(movies['metadata'])
+```
+
+#### 5. **Compute Similarities**
+Using the feature vectors created by the TF-IDF matrix, compute the similarity between movies using cosine similarity.
+
+```python
+from sklearn.metrics.pairwise import cosine_similarity
+
+# Calculating cosine similarity between all movies
+cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+```
+
+#### 6. **Build the Recommendation System**
+Now, create a function that returns movie recommendations based on the cosine similarity score.
+
+```python
+def get_recommendations(title, cosine_sim=cosine_sim):
+    # Get the index of the movie that matches the title
+    idx = movies[movies['title'] == title].index[0]
+
+    # Get the pairwise similarity scores of all movies with that movie
+    sim_scores = list(enumerate(cosine_sim[idx]))
+
+    # Sort the movies based on the similarity scores
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+
+    # Get the scores of the 10 most similar movies
+    sim_scores = sim_scores[1:11]
+
+    # Get the movie indices
+    movie_indices = [i[0] for i in sim_scores]
+
+    # Return the top 10 most similar movies
+    return movies['title'].iloc[movie_indices]
+```
+
+#### 7. **Test the System**
+Finally, test your recommendation system by inputting a movie title.
+
+```python
+# Test with a movie
+print(get_recommendations('The Dark Knight'))
+```
