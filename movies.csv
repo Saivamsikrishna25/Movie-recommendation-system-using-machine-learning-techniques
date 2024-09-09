@@ -1,4 +1,4 @@
-## Exploratory Analysis
+##Exploratory Analysis
 To begin this exploratory analysis, first import libraries and define functions for plotting the data using `matplotlib`. Depending on the data, not all plots will be made. (Hey, I'm just a simple kerneling bot, not a Kaggle Competitions Grandmaster!)
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.preprocessing import StandardScaler
