@@ -45,7 +45,7 @@ pip install pandas numpy scikit-learn
 ├── ratings.csv            # User ratings dataset (optional)
 ├── recommendation.py      # Main Python script to run the recommendation system
 ├── README.md              # Project documentation
-└── requirements.txt       # Python package dependencies
+└── code.sql               # sql file
 ```
 
 ## Usage
